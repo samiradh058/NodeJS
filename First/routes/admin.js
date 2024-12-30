@@ -6,6 +6,8 @@ const rootDir = require("../util/path");
 
 const router = express.Router();
 
+const products = [];
+
 //Middleware
 // app.use((req, res, next) => {
 //   console.log("Middleware");
@@ -15,7 +17,11 @@ const router = express.Router();
 // get and post will do exact match, use will just check
 
 router.get("/add-product", (req, res, next) => {
-  res.sendFile(path.join(rootDir, "views", "add-product.html"));
+  // res.sendFile(path.join(rootDir, "views", "add-product.html"));
+  res.render("add-product", {
+    pageTitle: "Add Prduct",
+    path: "/admin/add-product",
+  });
 });
 
 // app.use("/product", (req, res, next) => {
@@ -28,9 +34,13 @@ router.get("/add-product", (req, res, next) => {
 //   res.redirect("/");
 // });
 
-router.post("/product", (req, res, next) => {
-  console.log(req.body);
+router.post("/add-product", (req, res, next) => {
+  // console.log(req.body);
+  products.push({ title: req.body.title });
   res.redirect("/");
 });
 
-module.exports = router;
+// module.exports = router;
+
+exports.routes = router;
+exports.products = products;
