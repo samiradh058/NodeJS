@@ -1,7 +1,7 @@
 const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
-  res.render("add-product", {
+  res.render("admin/add-product", {
     pageTitle: "Add Prduct",
     path: "/admin/add-product",
     activeAddProduct: true,
@@ -11,26 +11,22 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const product = new Product(req.body.title);
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+
+  const product = new Product(title, imageUrl, description, price);
   product.save();
   res.redirect("/");
 };
 
 exports.getProducts = (req, res, next) => {
-  //   res.send("<h1>HELLO from EXPRESS</h1>");
-  // console.log(adminData.products);
-  // res.sendFile(path.join(rootDir, "views", "shop.html"));
-
-  // Template engine, returns template
-
   Product.fetchAll((products) => {
-    res.render("shop", {
-      pageTitle: "Shop",
+    res.render("admin/products", {
+      pageTitle: "Admin Products",
       prods: products,
-      path: "/",
-      hasProducts: products.length > 0,
-      activeShop: true,
-      productCSS: true,
+      path: "/admin/products",
     });
   });
 };

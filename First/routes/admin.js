@@ -6,8 +6,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const productsController = require("../controllers/products");
-``;
+const adminController = require("../controllers/admin");
 
 //Middleware
 // app.use((req, res, next) => {
@@ -17,7 +16,8 @@ const productsController = require("../controllers/products");
 
 // get and post will do exact match, use will just check
 
-router.get("/add-product", productsController.getAddProduct);
+router.get("/add-product", adminController.getAddProduct);
+router.get("/products", adminController.getProducts);
 
 // app.use("/product", (req, res, next) => {
 //   console.log(req.body);
@@ -29,7 +29,7 @@ router.get("/add-product", productsController.getAddProduct);
 //   res.redirect("/");
 // });
 
-router.post("/add-product", productsController.postAddProduct);
+router.post("/add-product", adminController.postAddProduct);
 
 // module.exports = router;
 
