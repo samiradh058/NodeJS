@@ -17,6 +17,7 @@ const adminController = require("../controllers/admin");
 // get and post will do exact match, use will just check
 
 router.get("/add-product", adminController.getAddProduct);
+
 router.get("/products", adminController.getProducts);
 
 // app.use("/product", (req, res, next) => {
@@ -31,9 +32,6 @@ router.get("/products", adminController.getProducts);
 
 router.post("/add-product", adminController.postAddProduct);
 
-// module.exports = router;
-
-// exports.routes = router;
-// exports.products = products;
+router.get("/edit-product/:productId", adminController.getEditProduct);
 
 module.exports = router;
