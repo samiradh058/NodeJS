@@ -80,6 +80,7 @@ app.get("/api/users", checkSchema(queryValidationSchema), (req, res, next) => {
   return res.send(users);
 });
 
+// Post
 app.post(
   "/api/users",
   checkSchema(createUserValidationSchema),
