@@ -19,6 +19,13 @@ router.get(
   "/api/users",
   checkSchema(queryValidationSchema),
   (req, res, next) => {
+    req.sessionStore.get(req.session.id, (err, sessionData) => {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+      console.log(sessionData);
+    });
     const result = validationResult(req);
     if (!result.isEmpty()) {
       return res.status(400).json({ errors: result.array() });

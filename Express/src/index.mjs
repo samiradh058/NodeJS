@@ -1,11 +1,22 @@
 import express from "express";
 import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser("SAM"));
+app.use(
+  session({
+    secret: "samir",
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+);
 app.use(routes);
 
 const loginMiddleware = (req, res, next) => {
@@ -22,6 +33,9 @@ app.use(loginMiddleware, (req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 app.get("/", (req, res, next) => {
+  console.log(req.session);
+  console.log(req.session.id);
+  req.session.visited = true;
   res.cookie("hello", "world", { maxAge: 60000, signed: true });
   res.status(201).send("Hello, World!");
 });
