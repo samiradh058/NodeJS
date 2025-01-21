@@ -13,6 +13,8 @@ import {
 import { users } from "../utils/constants.mjs";
 import { resolveIndexByUserId } from "../utils/middlewares.mjs";
 
+import { User } from "../mongoose/schemas/user.mjs";
+
 const router = Router();
 
 router.get(
@@ -40,20 +42,40 @@ router.get(
   }
 );
 
+// router.post(
+//   "/api/users",
+//   checkSchema(createUserValidationSchema),
+//   (req, res, next) => {
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//       return res.status(400).send({ errors: result.array() });
+//     }
+
+//     const data = matchedData(req);
+
+//     const newUser = { id: users[users.length - 1].id + 1, ...data };
+//     users.push(newUser);
+//     return res.status(201).send(newUser);
+//   }
+// );
+
 router.post(
   "/api/users",
   checkSchema(createUserValidationSchema),
-  (req, res, next) => {
+  async (req, res, next) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-      return res.status(400).send({ errors: result.array() });
+      return res.status(400).send(result.array());
     }
-
     const data = matchedData(req);
-
-    const newUser = { id: users[users.length - 1].id + 1, ...data };
-    users.push(newUser);
-    return res.status(201).send(newUser);
+    const newUser = new User(data);
+    try {
+      const savedUser = await newUser.save();
+      return res.send(201).send(savedUser);
+    } catch (err) {
+      console.log(err);
+      return res.sendStatus(400);
+    }
   }
 );
 

@@ -15,14 +15,19 @@ export const createUserValidationSchema = {
     },
   },
 
-  age: {
-    isInt: {
-      options: { min: 18, max: 120 },
-      errorMessage: "Age must be a valid integer between 18 and 120",
-    },
-    notEmpty: {
-      errorMessage: "Age is required",
-    },
+  // age: {
+  //   isInt: {
+  //     options: { min: 18, max: 120 },
+  //     errorMessage: "Age must be a valid integer between 18 and 120",
+  //   },
+  //   notEmpty: {
+  //     errorMessage: "Age is required",
+  //   },
+  // },
+  displayName: { notEmpty: true },
+
+  password: {
+    notEmpty: true,
   },
 };
 

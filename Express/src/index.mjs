@@ -3,11 +3,17 @@ import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
+import mongoose from "mongoose";
 import "./strategies/local-strategy.mjs";
 
-import { users } from "./utils/constants.mjs";
-
 const app = express();
+
+mongoose
+  .connect("mongodb://localhost:27017/learn_express")
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => console.log(err));
 
 app.use(express.json());
 app.use(cookieParser("SAM"));
@@ -27,7 +33,22 @@ app.use(passport.session());
 
 app.use(routes);
 
-app.post("/api/auth", passport.authenticate("local"), (req, res, next) => {});
+app.post("/api/auth", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+    if (!user) {
+      return res.status(401).json({ message: "Authentication failed" });
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
+      return res.status(200).json({ message: "Authentication successful" });
+    });
+  })(req, res, next);
+});
 
 app.get("/api/auth/status", (req, res, next) => {
   console.log(req.user);
@@ -61,15 +82,15 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Session
-// app.get("/", (req, res, next) => {
-//   console.log(req.session);
-//   console.log(req.session.id);
-//   req.session.visited = true;
-//   res.cookie("hello", "world", { maxAge: 60000, signed: true });
-//   res.status(201).send("Hello, World!");
-// });
+app.get("/", (req, res, next) => {
+  console.log(req.session);
+  console.log(req.session.id);
+  req.session.visited = true;
+  res.cookie("hello", "world", { maxAge: 60000, signed: true });
+  res.status(201).send("Hello, World!");
+});
 
+// Session
 // app.post("/api/auth", (req, res, next) => {
 //   const {
 //     body: { name, password },
