@@ -14,6 +14,7 @@ import { users } from "../utils/constants.mjs";
 import { resolveIndexByUserId } from "../utils/middlewares.mjs";
 
 import { User } from "../mongoose/schemas/user.mjs";
+import { hashPassword } from "../utils/helpers.mjs";
 
 const router = Router();
 
@@ -68,6 +69,8 @@ router.post(
       return res.status(400).send(result.array());
     }
     const data = matchedData(req);
+
+    data.password = await hashPassword(data.password);
     const newUser = new User(data);
     try {
       const savedUser = await newUser.save();
