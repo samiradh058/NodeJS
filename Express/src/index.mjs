@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
 import "./strategies/local-strategy.mjs";
 
 const app = express();
@@ -25,6 +26,9 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
     },
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+    }),
   })
 );
 
@@ -36,23 +40,28 @@ app.use(routes);
 app.post("/api/auth", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
+      console.error("Error during authentication:", err);
       return res.status(500).json({ message: "Internal Server Error" });
     }
     if (!user) {
+      console.log("Authentication failed:", info);
       return res.status(401).json({ message: "Authentication failed" });
     }
     req.logIn(user, (err) => {
       if (err) {
+        console.error("Error during login:", err);
         return res.status(500).json({ message: "Internal Server Error" });
       }
+      console.log("Authentication successful:", user);
       return res.status(200).json({ message: "Authentication successful" });
     });
   })(req, res, next);
 });
 
 app.get("/api/auth/status", (req, res, next) => {
-  console.log(req.user);
-  console.log(req.session);
+  console.log("Checking auth status");
+  console.log("req.user:", req.user);
+  console.log("req.session:", req.session);
 
   return req.user ? res.send(req.user) : res.sendStatus(401);
 });

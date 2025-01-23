@@ -74,7 +74,7 @@ router.post(
     const newUser = new User(data);
     try {
       const savedUser = await newUser.save();
-      return res.send(201).send(savedUser);
+      return res.status(201).send(savedUser);
     } catch (err) {
       console.log(err);
       return res.sendStatus(400);
